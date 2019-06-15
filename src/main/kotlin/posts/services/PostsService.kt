@@ -1,4 +1,4 @@
-package services
+package posts.services
 
 import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.coroutines.awaitStringResult
