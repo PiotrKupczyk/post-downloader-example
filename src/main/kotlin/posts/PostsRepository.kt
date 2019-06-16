@@ -6,6 +6,6 @@ import java.lang.Exception
 
 class PostsRepository(private val postsService: PostsService) {
     fun getAllPosts(): Result<List<Post>, Exception> = runBlocking {
-        return@runBlocking postsService.fetchPosts()
+         postsService.fetchPosts()
     }
 }
