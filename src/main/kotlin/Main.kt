@@ -1,15 +1,31 @@
-import posts.controllers.PostsController
-import posts.repositories.PostsRepository
-import posts.services.PostsService
+import com.github.kittinunf.result.*
+import io.github.cdimascio.dotenv.DotEnvException
+import io.github.cdimascio.dotenv.Dotenv
+import io.github.cdimascio.dotenv.dotenv
+import posts.PostsController
+import posts.PostsRepository
+import posts.PostsService
 import utilities.TxtFileWriter
-import kotlin.system.measureTimeMillis
 
 fun main() {
-    val fileDirectory = "src/main/kotlin/result"
-    val url = "https://jsonplaceholder.typicode.com/posts"
-    val postsController = PostsController( PostsRepository( PostsService(url) ), TxtFileWriter() )
-    val time = measureTimeMillis {
-        postsController.fetchAllAndSaveTo(fileDirectory)
-    }
-    println(time)
+
+    Result.of<Dotenv, DotEnvException> {
+        dotenv {
+            directory = "assets"
+            filename = ".env"
+            ignoreIfMalformed = true
+        }
+    }.fold({ dotenv ->
+        val serviceUrl = dotenv["service_url"].orEmpty()
+        val fileDirectory = dotenv["file_directory"].orEmpty()
+
+        val postsController = PostsController(PostsRepository(PostsService(serviceUrl)), TxtFileWriter())
+        postsController
+            .fetchAllPosts()
+            .success { posts -> postsController.saveTo(fileDirectory, posts) }
+    }, { exception ->
+        println("Couldn't get env variables.${System.lineSeparator()}Message: ${exception.message}")
+    })
+
+
 }
