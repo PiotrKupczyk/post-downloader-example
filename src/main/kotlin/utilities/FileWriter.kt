@@ -1,5 +1,7 @@
 package utilities
 
+import com.github.kittinunf.result.Result
+
 interface FileWriter {
-    fun writeToFile(filePath: String, element: Writable)
+    suspend fun writeToFile(filePath: String, element: Writable): Result<Unit, Exception>
 }

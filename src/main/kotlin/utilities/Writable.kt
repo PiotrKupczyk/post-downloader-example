@@ -1,5 +1,5 @@
 package utilities
 
 interface Writable {
-    fun decode(): String
+    fun decodeToString(): String
 }
